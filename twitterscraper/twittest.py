@@ -8,4 +8,4 @@ if __name__ == '__main__':
     # print the retrieved tweets to the screen:
     '''for tweet in list_of_tweets:
         print(tweet.timestamp)'''
-    utils.find_related_tweets('ryandrew8')
+    print(utils.find_four())

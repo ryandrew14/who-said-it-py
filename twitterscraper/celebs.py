@@ -1,8 +1,18 @@
 from bs4 import BeautifulSoup
 import requests
 import json
+import query
 
 FROM_URL = 'http://friendorfollow.com/twitter/most-followers/'
+
+# gets 500 most recent tweets from a user post-2010 (the text)
+def get_user_tweets_text(username):
+    tweets = query.query_tweets_once("from:"+username, 500)
+    ret = []
+    for tweet in tweets:
+        if len(tweet.text) > 0 and tweet.text[0] != '@':
+            ret.append(tweet.text)
+    return ret
 
 # gets a list of strings representing the twitter handles of the
 # celebs with the 100 most visited twitter pages
@@ -18,7 +28,17 @@ def get_celeb_usernames():
 # updates celebs.json, which holds the data on celebrity twitter names
 def update_db():
     cur_json_dict = {}
-    cur_json_dict['usernames'] = get_celeb_usernames()
+    users = get_celeb_usernames()
+    for name in users:
+        cur_json_dict[name] = get_user_tweets_text(name)
     open('celebs.json', 'w').write(json.dumps(cur_json_dict))
 
-update_db()
+def get_prof_pic(user):
+    profile = requests.get('http://twitter.com/'+user).content
+    soup = BeautifulSoup(profile, 'html.parser')
+    link = soup.find("img", class_='ProfileAvatar-image')['src']
+    return link
+
+
+# for body in get_user_tweets_text('ryandrew8'):
+#     print(body)
