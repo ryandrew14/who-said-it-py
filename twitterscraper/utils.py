@@ -13,15 +13,13 @@ most_used_words = ['the', 'be', 'and', 'of', 'a', 'in', 'to', 'have', 'it', 'i',
  'there', 'an', 'is', 'isn\'t', 'the', 'a', 'won\'t', '-', '...', 'was',
  'are', 'which', 'was', 'has', '–', '…', '&', 'into']
 
-celebs = open('celebs.json', 'r').read()
+celebs_json = open('celebs.json', 'r').read()
 
 most_visited_users = []#json.loads(open('../celebs.json', 'r').read())['usernames']
 
-for user in json.loads(celebs)[fake].keys():
+for user in json.loads(celebs_json).keys():
     most_visited_users.append(user)
 
-for user in json.loads(celebs)[real].keys():
-    most_visited_users.append(user)
 
 # random integer object ensuring that the next random called is not equal to the
 # previous or the second-previous or third-previous random number
