@@ -8,5 +8,4 @@ if __name__ == '__main__':
     # print the retrieved tweets to the screen:
     '''for tweet in list_of_tweets:
         print(tweet.timestamp)'''
-    for word in utils.find_most_used(list_of_tweets):
-        print(word)
+    utils.find_related_tweets('ryandrew8')
