@@ -29,16 +29,16 @@ def get_celeb_usernames():
 def update_db():
     cur_json_dict = {}
     users = get_celeb_usernames()
+    i = 0
     for name in users:
+        print("Working on number:", i)
         cur_json_dict[name] = get_user_tweets_text(name)
+        i += 1
     open('celebs.json', 'w').write(json.dumps(cur_json_dict))
 
+# gets the link to a given user's profile picture
 def get_prof_pic(user):
     profile = requests.get('http://twitter.com/'+user).content
     soup = BeautifulSoup(profile, 'html.parser')
     link = soup.find("img", class_='ProfileAvatar-image')['src']
     return link
-
-
-# for body in get_user_tweets_text('ryandrew8'):
-#     print(body)
