@@ -1,4 +1,3 @@
-import query
 import random
 import celebs
 import json
@@ -13,11 +12,11 @@ most_used_words = ['the', 'be', 'and', 'of', 'a', 'in', 'to', 'have', 'it', 'i',
  'there', 'an', 'is', 'isn\'t', 'the', 'a', 'won\'t', '-', '...', 'was',
  'are', 'which', 'was', 'has', '–', '…', '&', 'into']
 
-celebs_json = open('celebs.json', 'r').read()
+celebs_json = json.loads(open('celebs.json', 'r').read())
 
 most_visited_users = []#json.loads(open('../celebs.json', 'r').read())['usernames']
 
-for user in json.loads(celebs_json).keys():
+for user in celebs_json.keys():
     most_visited_users.append(user)
 
 
@@ -41,10 +40,10 @@ class Random(object):
 
 # gets 500 most recent tweets from a user post-2010 (the text)
 def get_user_tweets(username):
-    tweets = query.query_tweets_once("from:"+username, 500)
+    tweets = celebs_json[username]
     ret = []
     for tweet in tweets:
-        if len(tweet.text) > 0 and tweet.text[0] != '@':
+        if len(tweet) > 0 and tweet[0] != '@':
             ret.append(tweet)
     return ret
 
@@ -126,17 +125,19 @@ def find_tweet_with(word):
 
 # returns a random popular tweet from a user
 def find_tweet_from_user(user):
-    user_tweets = sort_tweets_by_activity(get_user_tweets(user))
+    user_tweets = get_user_tweets(user)
     i = random.randint(0, 19)
     return user_tweets[i]
 
-
 # returns four celebrity tweets as a json in the format:
 # {real:{'user':'tweet'}, fake:{'user1':'tweet1', 'user2':'tweet2', 'user3':'tweet3'}
-def find_four():
+def find_four(start_user=None):
     json_ret = {}
-    rand = Random(0, 99)
-    true_user = most_visited_users[rand()]
+    rand = Random(0, 49)
+    if not start_user:
+        true_user = most_visited_users[rand()]
+    else:
+        true_user = start_user
     true_tweet = find_tweet_from_user(true_user)
     fake_1 = most_visited_users[rand()]
     fake_2 = most_visited_users[rand()]
@@ -144,8 +145,8 @@ def find_four():
     ftweet_1 = find_tweet_from_user(fake_1)
     ftweet_2 = find_tweet_from_user(fake_2)
     ftweet_3 = find_tweet_from_user(fake_3)
-    fake = {fake_1:ftweet_1.text, fake_2:ftweet_2.text, fake_3:ftweet_3.text}
-    json_ret['real'] = {true_user:true_tweet.text}
+    fake = {fake_1:ftweet_1, fake_2:ftweet_2, fake_3:ftweet_3}
+    json_ret['real'] = {true_user:true_tweet}
     json_ret['fake'] = fake
     pics = {
         true_user:celebs.get_prof_pic(true_user),

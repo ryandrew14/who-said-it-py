@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 import json
 import utils
 import celebs
@@ -11,6 +12,8 @@ def index():
 
 @app.route('/tweet')
 def api_tweet():
+    if 'username' in request.args:
+        return utils.find_four_including(request.args['username'])
     return utils.find_four()
 
 if __name__ == '__main__':

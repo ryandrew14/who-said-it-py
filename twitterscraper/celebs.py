@@ -3,15 +3,28 @@ import requests
 import json
 import query
 
+
 FROM_URL = 'http://friendorfollow.com/twitter/most-followers/'
 
-# gets 500 most recent tweets from a user post-2010 (the text)
+# order tweets by activity
+def sort_tweets_by_activity(tweets):
+    def activityKey(tweet):
+        return int(tweet.likes) + int(tweet.retweets) + int(tweet.replies)
+    return sorted(tweets, key=activityKey, reverse=True)
+
+# gets 500 most recent tweets from a user post-2010 (the text), sorted
 def get_user_tweets_text(username):
-    tweets = query.query_tweets_once("from:"+username, 500)
+    tweets = sort_tweets_by_activity(query.query_tweets_once("from:"+username, 500))
     ret = []
     for tweet in tweets:
         if len(tweet.text) > 0 and tweet.text[0] != '@':
             ret.append(tweet.text)
+    for text in ret:
+        list = text.split()
+        for word in list:
+            if len(word) > 4 and word[0:3] == "http":
+                list.remove(word)
+        " ".join(list)
     return ret
 
 # gets a list of strings representing the twitter handles of the
@@ -23,7 +36,7 @@ def get_celeb_usernames():
     users = []
     for a in links:
         users.append(a.contents[0][1:])
-    return users
+    return users[:50]
 
 # updates celebs.json, which holds the data on celebrity twitter names
 def update_db():
