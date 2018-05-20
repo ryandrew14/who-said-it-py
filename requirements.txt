@@ -3,3 +3,4 @@ bs4
 lxml
 fake_useragent
 requests
+numpy
